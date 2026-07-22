@@ -10,3 +10,4 @@ packages:
   github.com/slok/sloth/internal/http/backend/storage: {interfaces: {SLOGetter, ServiceGetter}}
   github.com/slok/sloth/internal/http/backend/storage/prometheus: {interfaces: {PrometheusAPIClient}}
   github.com/slok/sloth/internal/http/ui: {interfaces: {ServiceApp}}
+  github.com/slok/sloth/internal/http/mcp/tools: {interfaces: {SLOLister, SLOGetter, ServiceLister, BurnedBudgetRangeLister, SLIAvailabilityRangeLister}}

@@ -21,6 +21,7 @@ const (
 
 type ListServicesRequest struct {
 	FilterSearchInput string
+	PageSize          int
 	SortMode          ServiceListSortMode
 	Cursor            string
 }
@@ -88,7 +89,7 @@ func (a *App) ListServices(ctx context.Context, req ListServicesRequest) (*ListS
 	}
 
 	// Handle pagination here for now, storage returns all.
-	psvcs, cursors := paginateSlice(svcs, req.Cursor)
+	psvcs, cursors := paginateSlice(svcs, req.Cursor, req.PageSize)
 	return &ListServicesResponse{
 		Services:          psvcs,
 		PaginationCursors: cursors,

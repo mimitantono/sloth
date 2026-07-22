@@ -27,6 +27,7 @@ import (
 	storageprometheus "github.com/slok/sloth/internal/http/backend/storage/prometheus"
 	storagesearch "github.com/slok/sloth/internal/http/backend/storage/search"
 	storagewrappers "github.com/slok/sloth/internal/http/backend/storage/wrappers"
+	httpmcp "github.com/slok/sloth/internal/http/mcp"
 	"github.com/slok/sloth/internal/http/ui"
 	"github.com/slok/sloth/internal/log"
 )
@@ -40,6 +41,10 @@ type serverCommand struct {
 	}
 	appServer struct {
 		address string
+	}
+	mcp struct {
+		enabled bool
+		path    string
 	}
 
 	prometheus struct {
@@ -69,6 +74,8 @@ func NewServerCommand(app *kingpin.Application) Command {
 	cmd.Flag("health-check-path", "Health check path.").Default("/status").StringVar(&c.statusServer.healthCheckPath)
 	cmd.Flag("metrics-path", "Prometheus metrics path where metrics will be served.").Default("/metrics").StringVar(&c.statusServer.metricsPath)
 	cmd.Flag("pprof-path", "PProf path where debug tool is available.").Default("/debug/pprof").StringVar(&c.statusServer.pprofPath)
+	cmd.Flag("mcp-enabled", "Enable MCP request/response HTTP server.").BoolVar(&c.mcp.enabled)
+	cmd.Flag("mcp-path", "Path where the MCP request/response HTTP server will be served.").Default("/mcp").StringVar(&c.mcp.path)
 
 	cmd.Flag("fake-prometheus", "Enable fake Prometheus server.").BoolVar(&c.prometheus.fake)
 	cmd.Flag("prometheus-address", "Prometheus server address.").Default("http://localhost:9090").StringVar(&c.prometheus.promAddress)
@@ -262,6 +269,20 @@ func (c serverCommand) Run(ctx context.Context, config RootConfig) error {
 
 		mux := http.NewServeMux()
 		mux.Handle(ui.ServePrefix+"/", uiHandler)
+
+		if c.mcp.enabled {
+			mcpHandler, err := httpmcp.New(httpmcp.Config{
+				Logger:     logger,
+				ServiceApp: app,
+			})
+			if err != nil {
+				return fmt.Errorf("could not create mcp handler: %w", err)
+			}
+
+			mux.Handle(c.mcp.path, mcpHandler)
+			logger.WithValues(log.Kv{"path": c.mcp.path}).Infof("MCP server enabled")
+		}
+
 		mux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, ui.ServePrefix, http.StatusSeeOther)
 		})) // Root redirect to UI.

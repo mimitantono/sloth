@@ -52,10 +52,13 @@ func paginationCursorFromString(encoded string) (*paginationCursor, error) {
 	return &c, nil
 }
 
-func paginateSlice[T any](items []T, cursorS string) (paginatedItems []T, cursors PaginationCursors) {
+func paginateSlice[T any](items []T, cursorS string, size int) (paginatedItems []T, cursors PaginationCursors) {
 	cursor, err := paginationCursorFromString(cursorS)
 	if err != nil {
 		cursor = &paginationCursor{}
+	}
+	if size > 0 {
+		cursor.Size = size
 	}
 	cursor.defaults()
 

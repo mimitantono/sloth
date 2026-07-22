@@ -33,6 +33,7 @@ type ListSLOsRequest struct {
 	FilterAlertFiring                 bool   // Used for filtering SLOs that have firing alerts.
 	FilterPeriodBudgetConsumed        bool   // Used for filtering SLOs that have burned budget above threshold.
 	FilterCurrentBurningBudgetOver100 bool   // Used for filtering SLOs that are currently burning budget over 100%.
+	PageSize                          int
 	SortMode                          SLOListSortMode
 	Cursor                            string
 }
@@ -183,7 +184,7 @@ func (a *App) ListSLOs(ctx context.Context, req ListSLOsRequest) (*ListSLOsRespo
 		})
 	}
 
-	prtSLOs, cursors := paginateSlice(rtSLOs, req.Cursor)
+	prtSLOs, cursors := paginateSlice(rtSLOs, req.Cursor, req.PageSize)
 	return &ListSLOsResponse{
 		SLOs:              prtSLOs,
 		PaginationCursors: cursors,

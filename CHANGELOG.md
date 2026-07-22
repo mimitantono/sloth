@@ -4,6 +4,13 @@
 
 ### Added
 
+- `server`: Support HTTP request/response MCP with the `--mcp-enabled` and `--mcp-path` flags.
+- MCP: Add the `context`, `list_slos` and `get_slo` tools.
+
+## [v0.16.0] - 2026-04-04
+
+### Added
+
 - K8s transformer plugins to be able to customize the k8s resulting objects without depending on current Prometheys operator Rule CR.
 - `sloth.dev/k8stransform/prom-operator-prometheus-rule/v1` K8s transformer plugin.
 - Users can now create multiple K8s objects as the output of the SLO generated rules.
@@ -17,6 +24,7 @@
 - UI: Support service list sort by name and alert status.
 - UI: Support alert firing, burning over budget and budget consumed in period SLO filtering on SLO listing.
 - Update to Kubernetes v1.35.
+- `validate` command will check for SLO duplicates (disable with `--ignore-slo-duplicates`).
 
 ### Changed
 
@@ -269,7 +277,8 @@
 - Support raw query based SLI.
 - Kubernetes (prometheus-operator) CRD generation support.
 
-[unreleased]: https://github.com/slok/sloth/compare/v0.15.0...HEAD
+[unreleased]: https://github.com/slok/sloth/compare/v0.16.0...HEAD
+[v0.16.0]: https://github.com/slok/sloth/compare/v0.15.0...v0.16.0
 [v0.15.0]: https://github.com/slok/sloth/compare/v0.14.0...v0.15.0
 [v0.14.0]: https://github.com/slok/sloth/compare/v0.13.0...v0.14.0
 [v0.13.0]: https://github.com/slok/sloth/compare/v0.12.0...v0.13.0
